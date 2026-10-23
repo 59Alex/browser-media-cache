@@ -6,6 +6,17 @@ import assert from 'node:assert/strict';
 
 const run = (command, args, cwd) => execFileSync(command, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const scratch = await mkdtemp(join(tmpdir(), 'browser-media-cache-package-'));
+function anchors(markdown) {
+  const counts = new Map();
+  const result = new Set();
+  for (const [, heading] of markdown.matchAll(/^#{1,6}\s+(.+?)\s*#*$/gm)) {
+    const base = heading.toLowerCase().replace(/[^\p{L}\p{N}_\- ]/gu, '').replaceAll(' ', '-');
+    const occurrence = counts.get(base) ?? 0;
+    counts.set(base, occurrence + 1);
+    result.add(occurrence ? `${base}-${occurrence}` : base);
+  }
+  return result;
+}
 try {
   const packed = JSON.parse(run('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', scratch], process.cwd()))[0];
   const paths = packed.files.map(file => file.path);
@@ -21,18 +32,23 @@ try {
   await assert.rejects(access(join(consumer, 'node_modules/react')));
   const installed = join(consumer, 'node_modules/@59alex/browser-media-cache');
   let checkedLinks = 0;
+  let checkedAnchors = 0;
   for (const path of paths.filter(path => path.endsWith('.md'))) {
     const markdown = await readFile(join(installed, path), 'utf8');
     for (const [, href] of markdown.matchAll(/\]\(([^)]+)\)/g)) {
       if (/^[a-z][a-z\d+.-]*:/i.test(href) || href.startsWith('//')) continue;
-      const target = href.split('#')[0];
-      if (!target) continue;
-      const destination = resolve(installed, dirname(path), decodeURIComponent(target));
+      const [target, fragment] = href.split('#');
+      const destination = target ? resolve(installed, dirname(path), decodeURIComponent(target)) : join(installed, path);
       await assert.doesNotReject(access(destination), `${path}: missing packed link target ${href}`);
-      checkedLinks++;
+      if (target) checkedLinks++;
+      if (fragment && destination.endsWith('.md')) {
+        const content = destination === join(installed, path) ? markdown : await readFile(destination, 'utf8');
+        assert.ok(anchors(content).has(decodeURIComponent(fragment)), `${path}: missing Markdown anchor ${href}`);
+        checkedAnchors++;
+      }
     }
   }
-  console.log(`Packed documentation: ${checkedLinks} relative file links resolve.`);
+  console.log(`Packed documentation: ${checkedLinks} relative file links and ${checkedAnchors} heading anchors resolve.`);
   await writeFile(join(consumer, 'consumer.mjs'), `
     import assert from 'node:assert/strict';
     import { MediaCache } from '@59alex/browser-media-cache';

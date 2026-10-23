@@ -180,6 +180,40 @@ test('active bytes may exceed the budget; final release makes them evictable', a
   assert.equal(cache.inspect().overBudget, false);
 });
 
+test('budget eviction does not revoke an idle sibling reacquired by an abort listener', async t => {
+  let replacement;
+  const { cache, live } = fixture(t, { maxBytes: 13, load: async ({ key: id, signal }) => {
+    if (id === 'a') signal.addEventListener('abort', () => {
+      void cache.invalidate(key('c'));
+      replacement = cache.acquire(key('b'));
+    });
+    return new Blob([id === 'large' ? '0123456789' : 'abc']);
+  } });
+  const a = cache.acquire(key('a')); await a.ready; a.release();
+  const b = cache.acquire(key('b')); const resource = await b.ready; b.release();
+  const c = cache.acquire(key('c')); await c.ready; c.release();
+  const large = cache.acquire(key('large')); await large.ready;
+  assert.equal(replacement.released, false);
+  assert.equal(await replacement.ready, resource);
+  assert.ok(live.has(resource.url));
+  assert.equal(cache.inspect().activeHandles, 2);
+  assert.equal(cache.inspect().overBudget, false);
+});
+
+test('acquire cannot resurrect a cache disposed by idle eviction callbacks', async t => {
+  let now = 0;
+  const { cache } = fixture(t, { idleTtlMs: 100, now: () => now,
+    load: async ({ signal }) => {
+      signal.addEventListener('abort', () => cache.dispose());
+      return new Blob(['a']);
+    } });
+  const a = cache.acquire(key('a')); await a.ready; a.release();
+  now = 100;
+  assert.throws(() => cache.acquire(key('new')), /disposed/);
+  assert.equal(cache.inspect().disposed, true);
+  assert.equal(cache.inspect().entries.length, 0);
+});
+
 test('namespace identity is collision-free and invalidation is scoped', async t => {
   const { cache, live } = fixture(t);
   const a = cache.acquire(key('b:c', 'a'));
@@ -286,6 +320,19 @@ test('required storage write failure rejects before creating a URL', async t => 
   const { cache, live } = fixture(t, { store, persistence: 'required' });
   await assert.rejects(cache.acquire(key()).ready, /disk full/);
   assert.equal(live.size, 0);
+});
+
+test('async diagnostic failures cannot reject successful loads or replace required storage errors', async t => {
+  const failure = new DOMException('quota', 'QuotaExceededError');
+  const store = { get: async () => { throw failure; }, put: async () => {}, delete: async () => {}, clear: async () => {} };
+  let diagnostics = 0;
+  const options = { store, onStoreError: async () => { diagnostics++; throw new Error('diagnostic failed'); } };
+  const bestEffort = fixture(t, options).cache;
+  await bestEffort.acquire(key()).ready;
+  const required = fixture(t, { ...options, persistence: 'required' }).cache;
+  await assert.rejects(required.acquire(key()).ready, error => error === failure);
+  await tick(); // An unhandled observer rejection would fail the Node test runner.
+  assert.equal(diagnostics, 2);
 });
 
 test('persistent hit skips the loader and retains its Blob metadata', async t => {

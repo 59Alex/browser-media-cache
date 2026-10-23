@@ -261,7 +261,8 @@ request is sent to their .invalid address. Use a unique application prefix.
 | required | Reject the pending handle | Reject cleanup promise; memory ownership still ends |
 
 QuotaExceededError, SecurityError, or missing CacheStorage follow the same policy.
-Diagnostics cannot break ownership even if onStoreError throws. For logout where
+Diagnostics cannot break ownership even if onStoreError throws or returns a rejected
+promise. Async diagnostics are not awaited. For logout where
 failure to remove persisted data must be observable to the caller, choose required
 and handle a rejected cleanup promise explicitly.
 

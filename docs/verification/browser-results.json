@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-23T21:12:01.911Z",
+  "timestamp": "2026-10-23T22:41:08.881Z",
   "reports": [
     {
       "engine": "chromium",
@@ -28,7 +28,7 @@
         "revokedUrls": 601,
         "activeHandles": 0,
         "retainedBytes": 0,
-        "elapsedMs": 627,
+        "elapsedMs": 568,
         "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
       },
       "errors": []
@@ -60,7 +60,7 @@
         "revokedUrls": 601,
         "activeHandles": 0,
         "retainedBytes": 0,
-        "elapsedMs": 757,
+        "elapsedMs": 701,
         "browser": "Mozilla/5.0 (X11; Linux x86_64; rv:156.0) Gecko/20100101 Firefox/156.0"
       },
       "errors": []

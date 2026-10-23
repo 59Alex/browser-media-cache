@@ -11,10 +11,9 @@
 [Verification and browser evidence](VERIFICATION.md) · [Roadmap](../ROADMAP.md)
 
 These documents live in the repository and use normal Markdown links for language
-and version selection. The standalone demo is a functional test lab, not a
-documentation website.
+and version selection. Run the functional demo locally to try the library.
 
 Документы находятся в репозитории; язык и версия выбираются обычными ссылками
-Markdown. Отдельное демо — функциональная лаборатория проверок, а не сайт документации.
+Markdown. Функциональное демо запускается локально и позволяет попробовать библиотеку.
 
 [← Back to repository README / Назад к README библиотеки](../README.md)

@@ -153,6 +153,8 @@ export class MediaCache {
     label(options.namespace, "namespace");
     label(options.key, "key");
     this.collect();
+    // Eviction abort listeners may synchronously dispose this instance.
+    this.#assertOpen();
     let resolve!: Consumer["resolve"];
     let reject!: Consumer["reject"];
     const ready = new Promise<MediaResource>((yes, no) => { resolve = yes; reject = no; });
@@ -266,8 +268,10 @@ export class MediaCache {
     let bytes = this.#bytes();
     for (const entry of idle) {
       if (this.#entries.size <= this.#maxEntries && bytes <= this.#maxBytes) break;
-      bytes -= entry.resource?.blob.size ?? 0;
+      // A prior eviction can invalidate or reacquire another candidate via abort listeners.
+      if (!this.#current(entry) || entry.consumers.size !== 0) continue;
       this.#destroy(entry, abortError("Idle media evicted"));
+      bytes = this.#bytes();
     }
     this.#schedule();
   }
@@ -389,7 +393,11 @@ export class MediaCache {
     const result = previous.then(async () => {
       try { return await run(store); }
       catch (error) {
-        try { this.#options.onStoreError?.({ ...scope, operation, error }); }
+        try {
+          // Async observers are also observational; never await or leak their rejection.
+          void Promise.resolve(this.#options.onStoreError?.({ ...scope, operation, error }))
+            .catch(() => undefined);
+        }
         catch { /* Diagnostics must not change cache ownership or storage policy. */ }
         if (this.#options.persistence === "required") throw error;
         return undefined;

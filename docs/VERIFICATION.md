@@ -29,10 +29,10 @@ desktop browser window or existing personal browser profile was used.
 | Check | Result |
 | --- | --- |
 | Typecheck and ESM/declaration build | Pass |
-| Guide examples | 12 TypeScript/TSX examples typechecked with documented setup; 53 relative Markdown file links resolve |
-| Node unit/race suite | 28 passed, zero failures/skips |
+| Guide examples | 26 README and EN/RU TypeScript/TSX examples typechecked with documented setup and installed React peer types |
+| Node unit/race suite | 31 passed, zero failures/skips |
 | Packed artifact installed in an isolated consumer | Pass; dist, package metadata, EN/RU documentation, roadmap and MIT license |
-| Documentation navigation in the installed package | All 53 relative file links resolve |
+| Documentation navigation in the installed package | All 58 relative file links and 34 Markdown heading anchors resolve |
 | Consumer TypeScript imports and actual URL lifecycle | Pass |
 | Core/storage import without a browser or installed React | Pass |
 | Real-browser demo controls | Shared A/B URL, A release preserves B, logout clears both |
@@ -48,6 +48,20 @@ failed-load retry, ignored late completions, generation replacement, reentrant
 invalidation, an in-flight persistence write followed by logout, and storage
 failure policies. QuotaExceededError, SecurityError, and unavailable storage are
 simulated in unit tests; browser storage was not deliberately filled to quota.
+
+The independent lifecycle review added three regression cases. Budget eviction
+now rechecks candidates after synchronous abort listeners: a listener can invalidate
+another key or reacquire an idle sibling, and the sibling must keep its URL.
+Acquire rechecks disposal after collecting idle entries, so a disposal triggered
+by an eviction listener cannot leave a new, permanently pending handle. Storage
+diagnostics observe rejected async callbacks without waiting for them or changing
+best-effort/required storage semantics. The first two regressions failed against
+the previous implementation and passed after these fixes.
+
+The optional React adapter and CacheStorage adapter were reviewed without adding
+a second ownership or persistence mechanism. React still acquires in effects,
+filters resources by cache/namespace/key, and releases during cleanup. Persistence
+still uses the existing per-namespace barriers; quotas do not become memory budgets.
 
 Stress counters count cache-owned URLs and ready-entry Blob.size. They are not
 heap snapshots, decoded-media measurements, process RSS measurements, or evidence
