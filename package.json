@@ -1,0 +1,67 @@
+{
+  "name": "@59alex/browser-media-cache",
+  "version": "0.1.0",
+  "description": "Shared browser media loads with explicit object URL ownership and bounded idle caching",
+  "type": "module",
+  "license": "MIT",
+  "author": "Aleksandr Kashevarov",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/59Alex/browser-media-cache.git"
+  },
+  "homepage": "https://github.com/59Alex/browser-media-cache#readme",
+  "bugs": {
+    "url": "https://github.com/59Alex/browser-media-cache/issues"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "docs",
+    "README.md",
+    "README.ru.md",
+    "ROADMAP.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./cache-storage": {
+      "types": "./dist/cache-storage.d.ts",
+      "import": "./dist/cache-storage.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "demo:build": "npm run build && node scripts/build-demo.mjs",
+    "demo": "npm run demo:build && node scripts/serve-demo.mjs",
+    "test:package": "npm run build && node scripts/test-package.mjs",
+    "test:browser": "npm run demo:build && node scripts/test-browser.mjs",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "esbuild": "0.28.2",
+    "playwright": "1.64.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "typescript": "7.0.2"
+  }
+}

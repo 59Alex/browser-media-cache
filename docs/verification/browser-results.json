@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-10-23T21:12:01.911Z",
+  "reports": [
+    {
+      "engine": "chromium",
+      "version": "156.0.8078.4",
+      "demoControls": "PASS",
+      "lifecycle": {
+        "status": "PASS",
+        "checks": [
+          "shared-load, image decode, partial release, final revoke: PASS",
+          "idle-only entry budget, active ownership, automatic idle TTL: PASS",
+          "per-consumer cancellation: PASS",
+          "logout generation guard and stale release: PASS",
+          "real CacheStorage hit, content type, namespace-only logout: PASS"
+        ],
+        "createdUrls": 8,
+        "revokedUrls": 8,
+        "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+      },
+      "stress": {
+        "status": "PASS",
+        "vanillaCycles": 500,
+        "reactStrictModeCycles": 100,
+        "namespaceSwitches": 1,
+        "loads": 601,
+        "createdUrls": 601,
+        "revokedUrls": 601,
+        "activeHandles": 0,
+        "retainedBytes": 0,
+        "elapsedMs": 627,
+        "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+      },
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "version": "156.0",
+      "demoControls": "PASS",
+      "lifecycle": {
+        "status": "PASS",
+        "checks": [
+          "shared-load, image decode, partial release, final revoke: PASS",
+          "idle-only entry budget, active ownership, automatic idle TTL: PASS",
+          "per-consumer cancellation: PASS",
+          "logout generation guard and stale release: PASS",
+          "real CacheStorage hit, content type, namespace-only logout: PASS"
+        ],
+        "createdUrls": 8,
+        "revokedUrls": 8,
+        "browser": "Mozilla/5.0 (X11; Linux x86_64; rv:156.0) Gecko/20100101 Firefox/156.0"
+      },
+      "stress": {
+        "status": "PASS",
+        "vanillaCycles": 500,
+        "reactStrictModeCycles": 100,
+        "namespaceSwitches": 1,
+        "loads": 601,
+        "createdUrls": 601,
+        "revokedUrls": 601,
+        "activeHandles": 0,
+        "retainedBytes": 0,
+        "elapsedMs": 757,
+        "browser": "Mozilla/5.0 (X11; Linux x86_64; rv:156.0) Gecko/20100101 Firefox/156.0"
+      },
+      "errors": []
+    }
+  ]
+}
