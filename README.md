@@ -1,6 +1,9 @@
 # browser-media-cache
 
-**[EN](README.md) · [RU](README.ru.md)** · Version: **[0.1.0](docs/0.1.0/en.md)** · [All documentation](docs/README.md)
+<details name="readme-language">
+<summary><picture><source media="(prefers-color-scheme: dark)" srcset="assets/lang-en-dark.svg"><img src="assets/lang-en-light.svg" width="42" height="26" alt="EN"></picture></summary>
+
+Version: **[0.1.0](docs/0.1.0/en.md)** · [All documentation](docs/index.md)
 
 Share browser media loads while keeping ownership of each object URL explicit.
 The framework-independent core provides acquire/release handles, consumer-specific
@@ -102,3 +105,115 @@ The implementation is new code written against the documented contract; no
 private application source, configuration, history, or media fixtures were copied.
 
 [MIT](LICENSE). [Roadmap and remaining release gates](ROADMAP.md).
+
+</details>
+
+<details name="readme-language" open>
+<summary><picture><source media="(prefers-color-scheme: dark)" srcset="assets/lang-ru-dark.svg"><img src="assets/lang-ru-light.svg" width="42" height="26" alt="RU"></picture></summary>
+
+Версия: **[0.1.0](docs/0.1.0/ru.md)** · [Вся документация](docs/index.md)
+
+Общая загрузка медиа в браузере с явным владением каждым object URL. Независимое
+от фреймворков ядро предоставляет acquire/release handles, индивидуальную отмену,
+хранение неиспользуемых записей, вытеснение по бюджету и очистку namespace.
+CacheStorage и React подключаются отдельными импортами.
+
+Исходная реализация v0.1.0 и установка упакованного npm-артефакта проверены
+локально. Публикация в npm ещё не выполнена; владение предполагаемым scope
+@59alex требует проверки. Наличие координат не означает публикацию в реестре.
+
+## Начало работы с локальным пакетом
+
+```sh
+npm ci
+npm test
+npm pack
+# В вашем приложении:
+npm install /path/to/59alex-browser-media-cache-0.1.0.tgz
+```
+
+```ts
+import { MediaCache } from '@59alex/browser-media-cache';
+
+const media = new MediaCache({
+  load: async ({ key, signal }) => {
+    const response = await fetch(`/media/${encodeURIComponent(key)}`, { signal });
+    if (!response.ok) throw new Error(`Media request failed: ${response.status}`);
+    return response.blob();
+  },
+  idleTtlMs: 30_000,
+  maxEntries: 128,
+  maxBytes: 64 * 1024 * 1024,
+});
+const handle = media.acquire({ namespace: 'account:42', key: 'avatar:7:v3' });
+const { url } = await handle.ready;
+// Используйте url, пока handle владеет им. Уберите его из интерфейса перед release.
+handle.release();
+```
+
+Два активных handle одного namespace/key разделяют загрузку и URL. Освобождение
+одного сохраняет второй. Последний освобождённый handle незавершённой загрузки
+отменяет её. TTL и бюджеты вытесняют только неиспользуемые записи: активные
+потребители могут превышать бюджет. Явная инвалидация и dispose завершают даже
+активное владение, отменяют signal handle и отзывают URL.
+
+## Возможности и примеры
+
+| Возможность | Руководство |
+| --- | --- |
+| Acquire/release и общие загрузки | [Владение](docs/0.1.0/ru.md#владение-и-общие-загрузки) |
+| Отмена отдельного потребителя и ошибки | [Отмена и ошибки](docs/0.1.0/ru.md#отмена-и-ошибки) |
+| TTL, бюджеты записей и байтов | [Хранение и бюджеты](docs/0.1.0/ru.md#хранение-и-бюджеты) |
+| Инвалидация ключа, namespace и logout | [Инвалидация](docs/0.1.0/ru.md#инвалидация-и-logout) |
+| Полная очистка экземпляра | [Dispose](docs/0.1.0/ru.md#dispose) |
+| Необязательный CacheStorage и квоты | [Постоянное хранилище](docs/0.1.0/ru.md#необязательный-cachestorage) |
+| Необязательный React hook | [React](docs/0.1.0/ru.md#необязательный-react-hook) |
+| Диагностика и лаборатория жизненного цикла | [Диагностика и демо](docs/0.1.0/ru.md#диагностика-и-демо) |
+
+## Язык и требования к среде
+
+Компилятор сборки: TypeScript 7.0.2. Выходной JavaScript: ESM, ES2022; объявления
+типов включены. Код использует стандартные приватные поля JavaScript, Promises
+и Web API. Нужны Blob, AbortController, AbortSignal.reason,
+URL.createObjectURL/revokeObjectURL, queueMicrotask, performance и таймеры.
+Это требования платформы, а не новые возможности TypeScript. Для CacheStorage
+дополнительно нужны соответствующий API браузера и безопасный контекст.
+
+Локально на Linux проверены Chromium 156.0.8078.4 и Firefox 156.0. React adapter
+проверен с React 19.3.1 в development StrictMode. Safari/WebKit, мобильные
+устройства, старые браузеры и React 18 не проверялись. Node 24.21.0 используется
+для разработки и тестов; импорт ядра и адаптера хранилища без браузерного
+окружения безопасен и проверен. Полифилы не включены.
+[Методика и результаты](docs/VERIFICATION.md).
+
+## Лаборатория жизненного цикла
+
+```sh
+npm run demo
+# Откройте выведенный адрес localhost в браузере.
+npm run test:package
+npx playwright install chromium firefox
+npm run test:browser
+```
+
+Демо показывает активные handles, байты Blob готовых записей, URL и вытеснение.
+Проверки декодируют настоящее изображение, используют CacheStorage и выполняют
+500 циклов с двумя потребителями и 100 циклов mount/unmount в React StrictMode.
+Это проверка владения ресурсами, а не измерение heap браузера или бенчмарк.
+
+## Границы
+
+Медиа намеренно материализуется в Blob. Библиотека не является потоковым
+транспортом для произвольно больших файлов. Учёт байтов исключает незавершённые
+загрузки, декодированные медиа, внутренние структуры браузера и постоянное
+хранилище. Namespace не заменяет аутентификацию. Очередность работы хранилища и
+инвалидация координируются внутри одного экземпляра: другая вкладка или экземпляр
+может снова записать тот же namespace. Используйте версионированные ключи и
+координацию аккаунтов на уровне приложения.
+
+Реализация написана заново по описанному контракту. Приватные исходники,
+конфигурация, история и медиа приложения не копировались.
+
+[MIT](LICENSE). [План и оставшиеся условия релиза](ROADMAP.md).
+
+</details>

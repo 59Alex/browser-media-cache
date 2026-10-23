@@ -1,6 +1,8 @@
 # v0.1.0 verification
 
-[Documentation index](README.md) · [EN guide](0.1.0/en.md) · [RU](0.1.0/ru.md)
+[← Back to documentation and versions / Назад к документации и версиям](index.md)
+
+[Documentation index](index.md) · [EN guide](0.1.0/en.md) · [RU](0.1.0/ru.md)
 
 Verification date: 2026-10-24, Asia/Yekaterinburg. Source implementation tested
 locally on Linux. This document describes observed behavior, not a guarantee for
@@ -88,3 +90,5 @@ No private application code, configuration, repository history, credentials, or
 media were copied. The existing MIT license is preserved. Third-party libraries
 are declared dependencies; generated demo bundles and node_modules are excluded
 from the package and source control.
+
+[← Back to documentation and versions / Назад к документации и версиям](index.md)

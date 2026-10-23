@@ -11,9 +11,9 @@ try {
   const paths = packed.files.map(file => file.path);
   assert.ok(paths.includes('LICENSE'));
   assert.ok(paths.includes('dist/index.js') && paths.includes('dist/index.d.ts'));
-  assert.ok(paths.includes('README.ru.md') && paths.includes('docs/README.md'));
+  assert.ok(paths.includes('README.md') && paths.includes('docs/index.md'));
   assert.ok(paths.includes('docs/0.1.0/en.md') && paths.includes('docs/0.1.0/ru.md'));
-  assert.ok(paths.every(path => path.startsWith('dist/') || path.startsWith('docs/') || ['README.md', 'README.ru.md', 'ROADMAP.md', 'LICENSE', 'package.json'].includes(path)), paths.join('\n'));
+  assert.ok(paths.every(path => path.startsWith('dist/') || path.startsWith('docs/') || /^assets\/lang-(en|ru)-(dark|light)\.svg$/.test(path) || ['README.md', 'ROADMAP.md', 'LICENSE', 'package.json'].includes(path)), paths.join('\n'));
   const consumer = join(scratch, 'consumer');
   await mkdir(consumer);
   await writeFile(join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module' }));

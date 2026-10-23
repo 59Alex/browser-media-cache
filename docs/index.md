@@ -1,6 +1,8 @@
 # Documentation / Документация
 
-[Repository README: EN](../README.md) · [README: RU](../README.ru.md)
+[← Back to repository README / Назад к README библиотеки](../README.md)
+
+[Repository README · EN / RU](../README.md)
 
 | Version / Версия | English | Русский | Runtime / Среда |
 | --- | --- | --- | --- |
@@ -14,3 +16,5 @@ documentation website.
 
 Документы находятся в репозитории; язык и версия выбираются обычными ссылками
 Markdown. Отдельное демо — функциональная лаборатория проверок, а не сайт документации.
+
+[← Back to repository README / Назад к README библиотеки](../README.md)

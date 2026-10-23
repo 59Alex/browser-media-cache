@@ -1,6 +1,8 @@
 # browser-media-cache 0.1.0
 
-**[EN](en.md) · [RU](ru.md)** · [Version index](../README.md) · [Repository README](../../README.md)
+[← Back to documentation and versions / Назад к документации и версиям](../index.md)
+
+**[EN](en.md) · [RU](ru.md)** · [Version index](../index.md) · [Repository README](../../README.md)
 
 This guide targets browser application developers. The core owns Blob URLs;
 your application owns DOM elements, authentication, the logical key scheme, and
@@ -332,3 +334,5 @@ its UI state and reacquire only when appropriate; the old URL no longer belongs
 to that consumer. If overBudget remains true, inspect activeHandles before
 reducing budgets further. Import errors from /react indicate that the optional
 React peer is missing; use the root import for framework-independent code.
+
+[← Back to documentation and versions / Назад к документации и версиям](../index.md)

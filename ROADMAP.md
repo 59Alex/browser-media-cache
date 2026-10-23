@@ -1,5 +1,7 @@
 # Implementation plan
 
+[← Back to repository README / Назад к README библиотеки](README.md)
+
 Deliver a small, framework-independent TypeScript library with a reproducible lifecycle demo.
 
 ## 1. Contract and packaging
@@ -50,3 +52,5 @@ The proposed @59alex npm scope still needs account ownership verification; the
 package is not published. CI is configured, but this local implementation report
 does not assert a completed remote workflow. No real application integration or
 heap/performance benchmark is claimed. Cross-tab coordination is outside v0.1.
+
+[← Back to repository README / Назад к README библиотеки](README.md)

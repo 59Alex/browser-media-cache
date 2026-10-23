@@ -18,9 +18,9 @@
     "dist",
     "docs",
     "README.md",
-    "README.ru.md",
     "ROADMAP.md",
-    "LICENSE"
+    "LICENSE",
+    "assets/lang-*.svg"
   ],
   "exports": {
     ".": {
