@@ -7,7 +7,7 @@
   "author": "Aleksandr Kashevarov",
   "repository": {
     "type": "git",
-    "url": "https://github.com/59Alex/browser-media-cache.git"
+    "url": "git+https://github.com/59Alex/browser-media-cache.git"
   },
   "homepage": "https://github.com/59Alex/browser-media-cache#readme",
   "bugs": {
@@ -63,5 +63,8 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "typescript": "7.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
