@@ -1,0 +1,5 @@
+# Language statistics describe library sources, not test and demo tooling.
+# Keep support files visible in diffs and retain their actual syntax highlighting.
+test/** linguist-detectable=false
+scripts/** linguist-detectable=false
+demo/** linguist-detectable=false
